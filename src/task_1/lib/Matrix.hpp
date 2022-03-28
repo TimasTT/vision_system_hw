@@ -27,7 +27,7 @@ public:
 
     size_t GetCols() const;
 
-    size_t GetRaws() const;
+    size_t GetRows() const;
 
     std::vector <std::vector<double>> GetMatrix() const;
 

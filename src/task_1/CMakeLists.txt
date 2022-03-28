@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(vision_system_hw)
+project(vision_system_hw_task_1)
 
 set(CMAKE_CXX_STANDARD 14)
 

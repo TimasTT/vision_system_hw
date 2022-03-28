@@ -9,9 +9,9 @@ static const char* BAD_SIZE_PARAMETERS = "Bad Size Parameters";
 
 static const double EPS = 1e-7;
 
-Matrix::Matrix(size_t raws, size_t cols) {
-    if (raws == 0 || cols == 0) throw std::runtime_error(BAD_INPUT_PARAMETERS);
-    data.resize(raws);
+Matrix::Matrix(size_t rows, size_t cols) {
+    if (rows == 0 || cols == 0) throw std::runtime_error(BAD_INPUT_PARAMETERS);
+    data.resize(rows);
     for (auto& raw : data) {
         raw.resize(cols);
     }
@@ -23,12 +23,12 @@ Matrix::Matrix(const std::vector<std::vector<double>> &mat) {
 }
 
 double Matrix::operator()(size_t i, size_t j) const {
-    if (i >= GetRaws() || j >= GetCols()) throw std::runtime_error(BAD_SIZE_PARAMETERS);
+    if (i >= GetRows() || j >= GetCols()) throw std::runtime_error(BAD_SIZE_PARAMETERS);
     return data[i][j];
 }
 
 double &Matrix::operator()(size_t i, size_t j) {
-    if (i >= GetRaws() || j >= GetCols()) throw std::runtime_error(BAD_SIZE_PARAMETERS);
+    if (i >= GetRows() || j >= GetCols()) throw std::runtime_error(BAD_SIZE_PARAMETERS);
     return data[i][j];
 
 }
@@ -37,7 +37,7 @@ size_t Matrix::GetCols() const {
     return data.data()->size();
 }
 
-size_t Matrix::GetRaws() const {
+size_t Matrix::GetRows() const {
     return data.size();
 }
 
@@ -46,9 +46,9 @@ std::vector<std::vector<double>> Matrix::GetMatrix() const {
 }
 
 bool Matrix::operator==(const Matrix& mat) const {
-    auto raws = GetRaws(); auto cols = GetCols();
-    if (raws != mat.GetRaws() || cols != mat.GetCols()) throw std::runtime_error("not correct sizes of matrix");
-    for (size_t i = 0; i < raws; ++i) {
+    auto rows = GetRows(); auto cols = GetCols();
+    if (rows != mat.GetRows() || cols != mat.GetCols()) throw std::runtime_error("not correct sizes of matrix");
+    for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
             if (std::abs(mat(i, j) - (*this)(i, j)) > EPS) {
                 return false;
@@ -61,9 +61,9 @@ bool Matrix::operator==(const Matrix& mat) const {
 bool Matrix::operator!=(const Matrix& mat) const { return !(*this == mat); }
 
 std::pair<Matrix, Matrix> Matrix::LU() const {
-    auto raws = GetRaws(); auto cols = GetCols();
-    Matrix L(raws, cols); Matrix U(raws, cols);
-    for (size_t i = 0; i < raws; ++i) {
+    auto rows = GetRows(); auto cols = GetCols();
+    Matrix L(rows, cols); Matrix U(rows, cols);
+    for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; j++) {
             if (j < i) {
                 U(i, j) = 0;
@@ -91,21 +91,21 @@ std::pair<Matrix, Matrix> Matrix::LU() const {
 }
 
 void Matrix::Inverse() {
-    auto raws = GetRaws(); auto cols = GetCols();
-    Matrix invMat(raws, cols);
-    for (size_t i = 0; i < raws; ++i) {
+    auto rows = GetRows(); auto cols = GetCols();
+    Matrix invMat(rows, cols);
+    for (size_t i = 0; i < rows; ++i) {
         invMat(i, i) = 1;
     }
     auto LU = (*this).LU();
-    for (size_t j = 0; j < raws; j++) {
+    for (size_t j = 0; j < rows; j++) {
         for (size_t i = 0; i < cols; i++) {
             for (size_t k = 0; k < i; k++) {
                 invMat(i, j) -= LU.first(i, k) * invMat(k, j);
             }
             invMat(i, j) /= LU.first(i, i);
         }
-        for (int i = raws - 1; i >= 0; i--) {
-            for (size_t k = i + 1; k < raws; k++) {
+        for (int i = rows - 1; i >= 0; i--) {
+            for (size_t k = i + 1; k < rows; k++) {
                 invMat(i, j) -= LU.second(i, k) * invMat(k, j);
             }
 
@@ -116,8 +116,8 @@ void Matrix::Inverse() {
 }
 
 std::ostream &operator<<(std::ostream &os, const Matrix &matrix) {
-    size_t cols = matrix.GetCols(); size_t raws = matrix.GetRaws();
-    for (size_t i = 0; i < raws; ++i) {
+    size_t cols = matrix.GetCols(); size_t rows = matrix.GetRows();
+    for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
             os << matrix(i, j);
             if (j == cols - 1) {
@@ -131,8 +131,8 @@ std::ostream &operator<<(std::ostream &os, const Matrix &matrix) {
 }
 
 static Matrix forward(const Matrix& L, const Matrix& b) {
-    Matrix y(L.GetRaws(), 1);
-    for (size_t i = 0; i < L.GetRaws(); ++i) {
+    Matrix y(L.GetRows(), 1);
+    for (size_t i = 0; i < L.GetRows(); ++i) {
         y(i, 0) = b(i, 0);
         for (size_t j = 0; j < i; ++j) {
             y(i, 0) -= L(i, j) * y(j, 0);
@@ -143,10 +143,10 @@ static Matrix forward(const Matrix& L, const Matrix& b) {
 }
 
 static Matrix back(const Matrix& U, const Matrix& y) {
-    Matrix x(U.GetRaws(), 1);
-    for (int i = U.GetRaws() - 1; i >= 0; --i) {
+    Matrix x(U.GetRows(), 1);
+    for (int i = U.GetRows() - 1; i >= 0; --i) {
         x(i, 0) = y(i, 0);
-        for (size_t j = i + 1; j < U.GetRaws(); ++j) {
+        for (size_t j = i + 1; j < U.GetRows(); ++j) {
             x(i, 0) -= U(i, j) * x(j, 0);
         }
         x(i, 0) /= U(i, i);

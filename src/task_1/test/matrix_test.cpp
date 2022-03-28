@@ -15,7 +15,7 @@ TEST(MatrixTests, testSolve) { // A * x = B
     ASSERT_EQ(x, expectedX);
 }
 
-TEST(matrix, inverse) { // Inverse matrix
+TEST(MatrixTests, testInverse) { // Inverse matrix
     Matrix A({{10, 6, 2, 0}, {5, 1, -2, 4}, {3, 5, 1, -1}, {0, 6, -2, 2}});
     Matrix expectedInv({{-8. / 11, 8. / 11, 17. / 11, -15. / 22},
                              {3. / 11, -3. / 11, -5. / 11, 7. / 22},
