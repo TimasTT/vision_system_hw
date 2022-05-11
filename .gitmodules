@@ -1,3 +1,6 @@
 [submodule "src/task_1/3rd_party/gtest"]
 	path = src/task_1/3rd_party/gtest
 	url = git@github.com:google/googletest.git
+[submodule "src/task_3/3rd_party/gtest"]
+	path = src/task_3/3rd_party/gtest
+	url = git@github.com:google/googletest.git

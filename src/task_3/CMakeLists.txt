@@ -3,8 +3,7 @@ project(vision_system_hw_task_3)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+add_subdirectory(3rd_party/gtest)
 
-add_executable(${PROJECT_NAME} Solver.cpp main.cpp)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
+add_subdirectory(lib)
+add_subdirectory(test)

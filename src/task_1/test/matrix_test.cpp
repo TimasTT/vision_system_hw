@@ -1,7 +1,3 @@
-//
-// Created by timas on 27.03.2022.
-//
-
 #include "Matrix.hpp"
 
 #include <gtest/gtest.h>
